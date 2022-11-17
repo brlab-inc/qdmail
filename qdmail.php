@@ -46,7 +46,7 @@ if (!function_exists('qd_send_mail')) {
     {
         $type_org = $type;
 
-        $mail = &Qdmail::getInstance();
+        $mail = Qdmail::getInstance();
         $mail->debug = $debug;
         if (!is_array($type)) {
             $type = array('TYPE' => $type);
@@ -606,7 +606,7 @@ class QdmailBase extends QdmailBranch
     // $mail -> (&) new Qdmail( Charset , Encoding , DetectOrder , error_display );
     //--------------------------------
 
-    function __construct($param = null)
+    protected function __construct($param = null)
     {
         $this->stack_construct = $param;
         if (!empty($param[0]) && !empty($param[1])) {
@@ -640,7 +640,7 @@ class QdmailBase extends QdmailBranch
         $this->sendmail_path = ini_get("sendmail_path");
     }
 
-    function & getInstance()
+    public static function getInstance()
     {
         static $instance = array();
 
@@ -665,7 +665,7 @@ class QdmailBase extends QdmailBranch
 
             return $instance[0];
         }
-        $instance[0] = &new Qdmail();
+        $instance[0] = new Qdmail();
         return $instance[0];
     }
     //--------------------------
@@ -1649,7 +1649,7 @@ class QdmailBase extends QdmailBranch
     function charsetBody($charset = null, $enc = null)
     {
         if (is_null($charset) && is_null($enc)) {
-            return array($this->charset_content, $this->content_transfer_enc_text, content_transfer_enc_html);
+            return array($this->charset_content, $this->content_transfer_enc_text, $this->content_transfer_enc_html);
         }
         if (is_array($charset)) {
             $enc = isset($charset[1]) ? $charset[1] : null;
@@ -2267,7 +2267,7 @@ class QdmailBase extends QdmailBranch
         }
 
         if (is_object($option)) {
-            $this->smtp_object = &$option;
+            $this->smtp_object = $option;
             $this->smtp = true;
             $option = null;
         }
@@ -2587,7 +2587,7 @@ class QdmailBase extends QdmailBranch
     {
         $content_type = ('TEXT' === $kind) ? 'text/plain' : 'text/html';
         $false = false;
-        $rep = &$this->serchBodyStructure($content_type, $this->body_structure, $false);
+        $rep = $this->serchBodyStructure($content_type, $this->body_structure, $false);
         if (false === $rep) {
             return false;
         }
@@ -2597,7 +2597,7 @@ class QdmailBase extends QdmailBranch
         $rep['HEADER']['Content-Transfer-Encoding'] = $enc;
     }
 
-    function & serchBodyStructure($content_type, &$bbs, &$false)
+    function serchBodyStructure($content_type, $bbs, $false)
     {
         foreach ($bbs as $fkey => $bs) {
             if (isset($bs['HEADER']) && (0 < count($bs['HEADER']))) {
@@ -2611,7 +2611,7 @@ class QdmailBase extends QdmailBranch
             if (!isset($bs['CONTENT']) || (isset($bs['CONTENT']) && !is_array($bs['CONTENT']))) {
                 continue;
             }
-            $ret = &$this->serchBodyStructure($content_type, $bbs[$fkey]['CONTENT'], $false);
+            $ret = $this->serchBodyStructure($content_type, $bbs[$fkey]['CONTENT'], $false);
             return $ret;
         }
         return $false;
@@ -3949,7 +3949,7 @@ EOF;
     //------------------------------------------
     // expecting Override on the other FrameWork
     //------------------------------------------
-    function & smtpObject($null = false)
+    function smtpObject($null = false)
     {
         if (is_null($null)) {
             $this->smtp_object = null;
@@ -3963,30 +3963,24 @@ EOF;
         } elseif (!class_exists('Qdsmtp') && !file_exists('qdsmtp.php')) {
             return $this->errorGather('Plese load SMTP Program - Qdsmtp http://hal456.net/qdsmtp', __LINE__);
         }
-        $this->smtp_object = &new Qdsmtp();
+        $this->smtp_object = new Qdsmtp();
         return $this->smtp_object;
     }
 
-    function setSmtpObject(&$obj)
+    function setSmtpObject($obj)
     {
         if (is_object($obj)) {
-            $this->smtp_object = &$obj;
+            $this->smtp_object = $obj;
             return true;
         } else {
             return false;
         }
     }
 
-}//the QdmailBase
+}
 
 class QdmailUserFunc extends QdmailBase
 {
-
-    function __construct($param = null)
-    {
-        parent::__construct($param);
-    }
-
     function validateAddr($addr)
     {
         if (0 == preg_match($this->varidate_address_regex, $addr, $match)) {
@@ -4008,15 +4002,13 @@ class QdmailUserFunc extends QdmailBase
         }
         return $word;
     }
-
 }
 
 class Qdmail extends QdmailUserFunc
 {
-
     var $name = 'Qdmail';
 
-    function Qdmail($param = null)
+    public function __construct($param = null)
     {
         if (!is_null($param)) {
             $param = func_get_args();
@@ -4030,7 +4022,6 @@ class Qdmail extends QdmailUserFunc
 //-------------------------------------------
 class QdmailComponent extends QdmailUserFunc
 {
-
     var $framework = 'CakePHP';
     var $view_dir = 'email';
     var $layout_dir = 'email';
@@ -4038,7 +4029,7 @@ class QdmailComponent extends QdmailUserFunc
     var $template = 'default';
     var $view = null;
 
-    function QdmailComponent($param = null)
+    function __construct($param = null)
     {
         if (!is_null($param)) {
             $param = func_get_args();
@@ -4046,7 +4037,7 @@ class QdmailComponent extends QdmailUserFunc
         parent::__construct($param);
     }
 
-    function startup(&$controller)
+    function startup($controller)
     {
         $this->Controller =& $controller;
         if (defined('COMPONENTS')) {
@@ -4058,7 +4049,7 @@ class QdmailComponent extends QdmailUserFunc
     //----------------------------
     // Override Parent Method
     //----------------------------
-    function & smtpObject($null = false)
+    function smtpObject($null = false)
     {
         if (isset($this->Qdsmtp) && is_object($this->Qdsmtp)) {
             return $this->Qdsmtp;
@@ -4069,7 +4060,7 @@ class QdmailComponent extends QdmailUserFunc
                 return $this->errorGather('Qdmail<->CakePHP Component Load Error , the name is Qdsmtp', __LINE__);
             }
         }
-        $this->Qdsmtp = &new QdsmtpComponent();
+        $this->Qdsmtp = new QdsmtpComponent();
         if (!is_object($this->Qdsmtp)) {
             return $this->errorGather('Qdmail<->CakePHP Component making Instance Error , the name is QdsmtpComponent', __LINE__);
         }
@@ -4122,7 +4113,7 @@ class QdmailComponent extends QdmailUserFunc
             }
         }
         $type = strtolower($type);
-        $view = &new $this->Controller->view($this->Controller, false);
+        $view = new $this->Controller->view($this->Controller, false);
         $view->layout = $this->layout;
         $mess = null;
         $content = $view->renderElement($this->view_dir . DS . $type . DS . $this->template, array('content' => $content), true);
@@ -4158,7 +4149,6 @@ class QdmailComponent extends QdmailUserFunc
 //-------------------------------------------
 class sfQdmail extends QdmailUserFunc
 {
-
     var $framework = 'Symfony';
 
     function __construct($param = null)
@@ -4478,7 +4468,6 @@ class sfQdmail extends QdmailUserFunc
 
 class QdDeco
 {
-
     var $template = null;
     var $data = array();
 

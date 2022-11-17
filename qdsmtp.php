@@ -9,7 +9,7 @@
  * Copyright 2008, Spok in japan , tokyo
  * hal456.net/qdmail    :  http://hal456.net/qdsmtp/
  * & CPA-LAB/Technical  :  http://www.cpa-lab.com/tech/
- * Licensed under The MIT License License
+ * Licensed under The MIT License
  *
  * @copyright        Copyright 2008, Spok.
  * @link            http://hal456.net/qdsmtp/
@@ -32,21 +32,21 @@ if (defined('CAKE_CORE_INCLUDE_PATH') || defined('CAKE')) {
 
 class QdsmtpError extends QdsmtpBranch
 {
-    var $name = 'QdsmtpError';
-    var $error_display = true;
-    var $errorlog_level = 0;
-    var $log_level = 0;
-    var $error = array();
-    var $error_stack = array();
-    var $log_LFC = "\r\n";
-    var $log_append = 'a';
-    var $errorlog_append = 'a';
-    var $log_filename = 'qdsmtp.log';
-    var $errorlog_filename = 'qdsmtp_error.log';
-    var $log_dateformat = 'Y-m-d H:i:s';
-    var $error_ignore = false;
+    public $name = 'QdsmtpError';
+    public $error_display = true;
+    public $errorlog_level = 0;
+    public $log_level = 0;
+    public $error = array();
+    public $error_stack = array();
+    public $log_LFC = "\r\n";
+    public $log_append = 'a';
+    public $errorlog_append = 'a';
+    public $log_filename = 'qdsmtp.log';
+    public $errorlog_filename = 'qdsmtp_error.log';
+    public $log_dateformat = 'Y-m-d H:i:s';
+    public $error_ignore = false;
 
-    function errorRender($error = null, $lf = null, $display = true)
+    public function errorRender($error = null, $lf = null, $display = true)
     {
         if (is_null($error)) {
             $error = $this->error;
@@ -68,7 +68,7 @@ class QdsmtpError extends QdsmtpBranch
         return $out;
     }
 
-    function errorGather($message = null, $line = null)
+    public function errorGather($message = null, $line = null)
     {
         if (!is_null($message) && !$this->error_ignore) {
             if (!is_null($line)) {
@@ -90,9 +90,9 @@ class QdsmtpError extends QdsmtpBranch
         return false;
     }
 
-    function logWrite($type, $message)
+    public function logWrite($type, $message)
     {
-        $tp = ('error' == $type) ? false : true;
+        $tp = !('error' == $type);
         $level = $tp ? $this->log_level : $this->errorlog_level;
         if (0 == $level) {
             return true;
@@ -116,7 +116,7 @@ class QdsmtpError extends QdsmtpBranch
         return true;
     }
 
-    function log()
+    public function log()
     {
         $mes = null;
         foreach ($this->smtp_log as $line) {
@@ -126,7 +126,7 @@ class QdsmtpError extends QdsmtpBranch
         $this->smtp_log = array();
     }
 
-    function logFilename($data = null)
+    public function logFilename($data = null)
     {
         if (is_null($data)) {
             return $this->log_filename;
@@ -139,7 +139,7 @@ class QdsmtpError extends QdsmtpBranch
         }
     }
 
-    function errorlogFilename($data = null)
+    public function errorlogFilename($data = null)
     {
         if (is_null($data)) {
             return $this->errorlog_filename;
@@ -155,10 +155,9 @@ class QdsmtpError extends QdsmtpBranch
 
 class QdsmtpBase extends QdsmtpError
 {
-
-    var $name = 'QdSmtp';
-    var $smtpLFC = "\r\n";
-    var $smtp_param = array(
+    public $name = 'QdSmtp';
+    public $smtpLFC = "\r\n";
+    public $smtp_param = array(
         'HOST' => null,
         'FROM' => null,
         'USER' => null,
@@ -174,32 +173,32 @@ class QdsmtpBase extends QdsmtpError
         'POP_PASS' => null,
         'CONTINUE' => null,
     );
-    var $protocol_def = 'SMTP';
-    var $smtp_log = array();
-    var $smtp_auth_kind = array('PLAIN');
-//	var $smtp_auth_kind	= array('CRAM-MD5','DIGEST-MD5','LOGIN','PLAIN');
-    var $data = null;
-    var $continue = false;
-    var $auto_kind = true;
-    var $rcpt = array();
-    var $rcpt_stack = array();
-    var $rcpt_undone = array();
-    var $rcpt_undone_stack = array();
-    var $smtp_limit = 1000;
-    var $sock = null;
-    var $already_auth = false;
+    public $protocol_def = 'SMTP';
+    public $smtp_log = array();
+    public $smtp_auth_kind = array('PLAIN');
+//	public $smtp_auth_kind	= array('CRAM-MD5','DIGEST-MD5','LOGIN','PLAIN');
+    public $data = null;
+    public $continue = false;
+    public $auto_kind = true;
+    public $rcpt = array();
+    public $rcpt_stack = array();
+    public $rcpt_undone = array();
+    public $rcpt_undone_stack = array();
+    public $smtp_limit = 1000;
+    public $sock = null;
+    public $already_auth = false;
     // POP3
-    var $pop3_time_file = 'qdsmtp.time';
-    var $pop3_use_file = true;
-    var $pop3_connect_start = null;
-    var $pop3_valid_minute = 10;
-    var $time_out = 3;
-    var $always_notify_success = false;
+    public $pop3_time_file = 'qdsmtp.time';
+    public $pop3_use_file = true;
+    public $pop3_connect_start = null;
+    public $pop3_valid_minute = 10;
+    public $time_out = 3;
+    public $always_notify_success = false;
 
-    function QdsmtpBase($param = null)
+    public function __construct($param = null)
     {
         if (!is_null($param[0]) && is_bool($param[0])) {
-            $this->continue = $continue;
+            $this->continue = $param[0];
         }
         if (is_array($param[0])) {
             $this->server($param[0]);
@@ -209,7 +208,7 @@ class QdsmtpBase extends QdsmtpError
     //-----------------------------------------
     // User Interface except POP3
     //-----------------------------------------
-    function server($param = null)
+    public function server($param = null)
     {
         if (is_null($param)) {
             return $this->smtp_param;
@@ -230,7 +229,7 @@ class QdsmtpBase extends QdsmtpError
         return true;
     }
 
-    function data($data = null)
+    public function data($data = null)
     {
         if (is_null($data)) {
             return $this->data;
@@ -243,12 +242,12 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function to($recip, $add = false)
+    public function to($recip, $add = false)
     {
         return $this->recipient($recip);
     }
 
-    function recipient($recip, $add = false)
+    public function recipient($recip, $add = false)
     {
         if (!is_array($recip)) {
             $recip = array($recip);
@@ -262,17 +261,17 @@ class QdsmtpBase extends QdsmtpError
         return $this->errorGather();
     }
 
-    function addRecipient($recip)
+    public function addRecipient($recip)
     {
         return $this->recipient($recip, true);
     }
 
-    function addto($recip)
+    public function addto($recip)
     {
         return $this->addRecipient($recip);
     }
 
-    function done($stack = false)
+    public function done($stack = false)
     {
         if ($stack) {
             return $this->rcpt_stack;
@@ -281,7 +280,7 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function undone($stack = false)
+    public function undone($stack = false)
     {
         if ($stack) {
             return $this->rcpt_undone_stack;
@@ -290,7 +289,7 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function continueConnect($bool = null)
+    public function continueConnect($bool = null)
     {
         if (is_null($bool)) {
             return $this->continue;
@@ -303,7 +302,7 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function timeOut($sec = null)
+    public function timeOut($sec = null)
     {
         if (is_null($sec)) {
             return $this->time_out;
@@ -316,7 +315,7 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function errorlogLevel($num = null)
+    public function errorlogLevel($num = null)
     {
         if (is_null($num)) {
             return $this->errorlog_level;
@@ -329,7 +328,7 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function logLevel($num = null)
+    public function logLevel($num = null)
     {
         if (is_null($num)) {
             return $this->log_level;
@@ -342,7 +341,7 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function alwaysNotifySuccess($bool = null)
+    public function alwaysNotifySuccess($bool = null)
     {
         if (is_null($bool)) {
             return $this->always_notify_success;
@@ -358,13 +357,13 @@ class QdsmtpBase extends QdsmtpError
     // Sending Method
     //------------------------------------------
     // Qdsmtp ignore $option parameter
-    function mail($to, $subject, $message, $header = null, $option = null)
+    public function mail($to, $subject, $message, $header = null, $option = null)
     {
         $this->makeData($to, $subject, $message, $header, $option);
         return $this->send();
     }
 
-    function send($data = null)
+    public function send($data = null)
     {
         if (!is_array($this->smtp_param['PROTOCOL'])) {
             $fg = $this->sendBase($data, $this->smtp_param['PROTOCOL']);
@@ -395,7 +394,7 @@ class QdsmtpBase extends QdsmtpError
         return (0 === count($this->error_stack)) && $this->errorGather();
     }
 
-    function close()
+    public function close()
     {
         $items = array(
             array('QUIT', null),
@@ -407,7 +406,7 @@ class QdsmtpBase extends QdsmtpError
         fclose($this->sock);
     }
 
-    function sendBase($data = null, $protocol = null)
+    public function sendBase($data = null, $protocol = null)
     {
         if (!is_null($data)) {
             $this->data = $data;
@@ -418,7 +417,7 @@ class QdsmtpBase extends QdsmtpError
         switch ($protocol) {
             case 'POP_BEFORE'://POP3
                 if (!$this->pop3()) {
-                    return $this->errorGather('POP failure', __LINE);
+                    return $this->errorGather('POP failure', __LINE__);
                 }
             case 'SMTP':
                 if (!is_resource($this->sock)) {
@@ -452,7 +451,7 @@ class QdsmtpBase extends QdsmtpError
                     }
                     $decide = strtolower(str_replace('-', '_', $decide));
                     if (!$this->{$decide}()) {
-                        return $this->errorGather('Auth Error', __LINE__);;
+                        return $this->errorGather('Auth Error', __LINE__);
                     }
                     $this->already_auth = true;
                 }
@@ -481,13 +480,13 @@ class QdsmtpBase extends QdsmtpError
 
 
     //----------------------------------------------
-    // Comunication
+    // Communication
     //----------------------------------------------
     //-------------------------------------------------------------------------
     // see RFC821
     // in japanese ->http://www.sea-bird.org/doc/rfc_doc/rfc821-jp.txt(not me)
     //-------------------------------------------------------------------------
-    var $smtp_status100 = array(
+    public $smtp_status100 = array(
         1 => 4,
         2 => 3,
         3 => 2,
@@ -497,7 +496,7 @@ class QdsmtpBase extends QdsmtpError
     // 0 error
     // 1 continue
     // 2 final
-    var $smtp_status10 = array(
+    public $smtp_status10 = array(
         0 => 0,
         1 => 5,
         2 => 1,
@@ -506,7 +505,7 @@ class QdsmtpBase extends QdsmtpError
         5 => 5,
     );
 
-    function sayHello()
+    public function sayHello()
     {
         $items = array(
             array('EHLO', $this->smtp_param['HOST']),
@@ -518,7 +517,7 @@ class QdsmtpBase extends QdsmtpError
         return $this->errorGather();
     }
 
-    function sendData()
+    public function sendData()
     {
         $reci = array();
 
@@ -561,14 +560,14 @@ class QdsmtpBase extends QdsmtpError
     }
 
 
-    function communicate($items, $fp = null)
+    public function communicate($items, $fp = null)
     {
         if (is_null($fp)) {
             $fp = $this->sock;
         }
         $message = null;
         if (!is_resource($fp)) {
-            return array($this->errorGather('Error Resouce  or stop connect', __LINE__), $message, false);
+            return array($this->errorGather('Error Resource  or stop connect', __LINE__), $message, false);
         }
         foreach ($items as $item) {
             if ('DATA_CONTENT' == $item[0]) {
@@ -608,7 +607,7 @@ class QdsmtpBase extends QdsmtpError
                         $s = $this->smtp_status100[$s100] * $this->smtp_status10[$s10];
                         switch ($s) {
                             case 0: // Error
-                                return array($this->errorGather('Unkown Error :status' . $st . ' message:' . htmlspecialchars($_message) . ' on ' . htmlspecialchars($put_message), __LINE__), $message, $st);
+                                return array($this->errorGather('Unknown Error :status' . $st . ' message:' . htmlspecialchars($_message) . ' on ' . htmlspecialchars($put_message), __LINE__), $message, $st);
                                 break;
                             case 3: //22X,220
                                 $contine = true;
@@ -616,7 +615,7 @@ class QdsmtpBase extends QdsmtpError
                             case 10: //35X,354
                                 $contine = false;
                                 break;
-                            case 15: //25X,250 Sucsess
+                            case 15: //25X,250 Success
                                 $contine = false;
                                 break;
                             default:
@@ -630,13 +629,13 @@ class QdsmtpBase extends QdsmtpError
         return array($this->errorGather(), $message, $st);
     }
 
-    function getMessage($fp = null)
+    public function getMessage($fp = null)
     {
         if (is_null($fp)) {
             $fp = $this->sock;
         }
         if (!is_resource($fp)) {
-            return array($this->errorGather('Error Resouce  or stop connect', __LINE__), null);
+            return array($this->errorGather('Error Resource  or stop connect', __LINE__), null);
         }
         $status = array();
         $status[-1] = null;
@@ -650,7 +649,7 @@ class QdsmtpBase extends QdsmtpError
                 if (true === $er ['timed_out']) {
                     $er_mes = ' SYSTEM TIME OUT ';
                 }
-                return array($this->errorGather('No Responce' . $er_mes, __LINE__), null);
+                return array($this->errorGather('No Response' . $er_mes, __LINE__), null);
             }
             $status[$count] = substr($mes, 0, 3);
             $_continue = substr($mes, 3, 1);
@@ -666,7 +665,7 @@ class QdsmtpBase extends QdsmtpError
         return array($status[0], implode($this->smtpLFC, $message));
     }
 
-    function connect($host = null, $port = null, $status = 220)
+    public function connect($host = null, $port = null, $status = 220)
     {
         if (is_null($host)) {
             $host = $this->smtp_param['HOST'];
@@ -682,7 +681,7 @@ class QdsmtpBase extends QdsmtpError
         return $sock;
     }
 
-    function tryUntilSuccess($items)
+    public function tryUntilSuccess($items)
     {
         $try = false;
         $err_mes = array();
@@ -706,7 +705,7 @@ class QdsmtpBase extends QdsmtpError
     //--------------------------
     // AUTH
     //--------------------------
-    function plain()
+    public function plain()
     {
         $plain = $this->makePlain();
         $items = array();
@@ -716,7 +715,7 @@ class QdsmtpBase extends QdsmtpError
         return $this->tryUntilSuccess($items);
     }
 
-    function makePlain()
+    public function makePlain()
     {
         $plain[0] = base64_encode($this->smtp_param['USER'] . "\0" . $this->smtp_param['USER'] . "\0" . $this->smtp_param['PASS']);
         $plain[1] = base64_encode($this->smtp_param['USER'] . "\0" . $this->smtp_param['PASS']);
@@ -725,7 +724,7 @@ class QdsmtpBase extends QdsmtpError
     //-----------------------------------
     // Utility
     //-----------------------------------
-    function makeData($to, $subject, $message, $header = null, $option = null)
+    public function makeData($to, $subject, $message, $header = null, $option = null)
     {
         $recip = array();
         $recip = array_merge($recip, $this->extractAddr($to));
@@ -736,7 +735,7 @@ class QdsmtpBase extends QdsmtpError
         return $this->data = $head . $this->smtpLFC . $this->smtpLFC . $message;
     }
 
-    function extractAddr($line)
+    public function extractAddr($line)
     {
         if (0 === preg_match_all('/<?([^<,]+@[^>,]+)>?\s*,?\s*/', $line, $matches)) {
             return array();
@@ -745,7 +744,7 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function extractHeader($section, $header)
+    public function extractHeader($section, $header)
     {
         if (0 === preg_match('/' . $section . ': (.*)\r?\n[^\s]/is', $header, $matches)) {
             return null;
@@ -754,18 +753,18 @@ class QdsmtpBase extends QdsmtpError
         }
     }
 
-    function smtpEscape($mes)
+    public function smtpEscape($mes)
     {
         $mes = preg_replace('/\r?\n\.\r?\n/is', $this->smtpLFC . '..' . $this->smtpLFC, $mes);
         if (0 !== preg_match('/\r?\n[^\r\n]{' . $this->smtp_limit . ',}\r?\n/is', $mes)) {
-            return $this->errorGather('SMTP Overfllow ' . $this->smtp_limit . ' chars in one line.', __LINE__);
+            return $this->errorGather('SMTP Overflow ' . $this->smtp_limit . ' chars in one line.', __LINE__);
         }
         return $mes;
     }
     //----------------------------------------------------
     // POP3
     //----------------------------------------------------
-    function pop3()
+    public function pop3()
     {
         if ($this->pop3_use_file) {
             if (!file_exists($this->pop3_time_file)) {
@@ -795,7 +794,7 @@ class QdsmtpBase extends QdsmtpError
         return $this->errorGather();
     }
 
-    function pop3UseFile($bool = null)
+    public function pop3UseFile($bool = null)
     {
         if (is_null($bool)) {
             return $this->pop3_use_file;
@@ -804,11 +803,11 @@ class QdsmtpBase extends QdsmtpError
             $this->pop3_use_file = $bool;
             return $this->errorGather();
         } else {
-            return $this->errorGather('POP3 UseFile specifed error', __LINE__);
+            return $this->errorGather('POP3 UseFile specified error', __LINE__);
         }
     }
 
-    function pop3TimeFilename($filename = null)
+    public function pop3TimeFilename($filename = null)
     {
         if (is_null($filename)) {
             return $this->pop3_time_file;
@@ -817,11 +816,11 @@ class QdsmtpBase extends QdsmtpError
             $this->pop3_time_file = $filename;
             return $this->errorGather();
         } else {
-            return $this->errorGather('POP3 Filename specifed error', __LINE__);
+            return $this->errorGather('POP3 Filename specified error', __LINE__);
         }
     }
 
-    function pop3ValidMinute($min = null)
+    public function pop3ValidMinute($min = null)
     {
         if (is_null($min)) {
             return $this->pop3_valid_minute;
@@ -830,20 +829,20 @@ class QdsmtpBase extends QdsmtpError
             $this->pop3_valid_minute = $min;
             return $this->errorGather();
         } else {
-            return $this->errorGather('POP3 Valid Minute specifed error', __LINE__);
+            return $this->errorGather('POP3 Valid Minute specified error', __LINE__);
         }
     }
 
-    function writePop3Time()
+    public function writePop3Time()
     {
         $fp_time = fopen($this->pop3_time_file, 'w');
         fputs($fp_time, time());
         fclose($fp_time);
     }
     //--------------------------------
-    // Result Colleciton
+    // Result Collection
     //--------------------------------
-    var $smtp_status = array(
+    public $smtp_status = array(
 
         'USER' => array(
             '+OK' => 'S', // for pop3
@@ -923,12 +922,12 @@ class QdsmtpBase extends QdsmtpError
 
 class Qdsmtp extends QdsmtpBase
 {
-    function Qdsmtp($param = null)
+    public function __construct($param = null)
     {
         if (!is_null($param)) {
             $param = func_get_args();
         }
-        parent::QdsmtpBase($param);
+        parent::__construct($param);
     }
 }
 
@@ -938,23 +937,23 @@ class Qdsmtp extends QdsmtpBase
 class QdsmtpComponent extends QdsmtpBase
 {
 
-    var $layout = 'default';
-    var $view_dir = 'email';
-    var $layout_dir = 'email';
-    var $template = 'default';
-    var $view = null;
+    public $layout = 'default';
+    public $view_dir = 'email';
+    public $layout_dir = 'email';
+    public $template = 'default';
+    public $view = null;
 
-    function QdsmtpComponent($param = null)
+    public function __construct($param = null)
     {
         if (!is_null($param)) {
             $param = func_get_args();
         }
-        parent::QdsmtpBase($param);
+        parent::__construct($param);
     }
 
-    function startup(&$controller)
+    public function startup($controller)
     {
-        $this->Controller =& $controller;
+        $this->Controller = $controller;
         if (defined('COMPONENTS')) {
             $this->logFilename(COMPONENTS . $this->name . '.log');
             $this->errorlogFilename(COMPONENTS . '_error' . $this->name . '.log');
